@@ -13,7 +13,7 @@ class BarChart extends Component {
     // set the ranges
     const y = d3
       .scaleBand()
-      .range([height, 0])
+      .range([0, height])
       .padding(0.1);
 
     const x = d3.scaleLinear().range([0, width]);
@@ -49,6 +49,7 @@ class BarChart extends Component {
       .enter()
       .append("rect")
       .attr("class", "bar")
+      .attr("fill", "blue")
       .attr("width", function(d) {
         return x(d.value);
       })
@@ -57,6 +58,30 @@ class BarChart extends Component {
       })
       .attr("height", y.bandwidth());
 
+    svg.selectAll(".category-label")  		
+	  .data(data)
+	  .enter()
+	  .append("text")
+	  .attr("class","label")
+	  .attr("x", (function(d) { return x(d.value) } ))
+	  .attr("y", function(d) { return y(d.category) })
+      .attr("dy", ".75em")
+      .attr("fill", "white")
+      .attr("text-anchor", "end")
+	  .text(function(d) { return d.category; });   
+
+    svg.selectAll(".value-label")  		
+	  .data(data)
+	  .enter()
+	  .append("text")
+	  .attr("class","label")
+	  .attr("x", (function(d) { return x(d.value) } ))
+	  .attr("y", function(d) { return y(d.category) })
+      .attr("dy", ".75em")
+      .attr("fill", "black")
+      .attr("text-anchor", "beginning")
+      .text(function(d) { return d.value; });   
+      
     // add the x Axis
     svg
       .append("g")
@@ -64,7 +89,7 @@ class BarChart extends Component {
       .call(d3.axisBottom(x));
 
     // add the y Axis
-    svg.append("g").call(d3.axisLeft(y));
+    // svg.append("g").call(d3.axisLeft(y));
   }
 
   componentDidMount() {
