@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import numeral from 'numeral';
 import * as d3 from "d3";
 
 class BarChart extends Component {
@@ -80,13 +81,15 @@ class BarChart extends Component {
       .attr("dy", ".75em")
       .attr("fill", "black")
       .attr("text-anchor", "beginning")
-      .text(function(d) { return d.value; });   
+      .text(function(d) { return numeral(d.value).format('0.0a'); });   
       
     // add the x Axis
     svg
       .append("g")
       .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x));
+      .call(d3.axisBottom(x)
+        .ticks(10)
+        .tickFormat(d3.format('.1s')))
 
     // add the y Axis
     // svg.append("g").call(d3.axisLeft(y));
