@@ -90,9 +90,6 @@ class BarChart extends Component {
       .call(d3.axisBottom(x)
         .ticks(10)
         .tickFormat(d3.format('.1s')))
-
-    // add the y Axis
-    // svg.append("g").call(d3.axisLeft(y));
   }
 
   componentDidMount() {
