@@ -41,7 +41,7 @@ function sort(list) {
 function rank(sorted_list, top) {
     var ranked_list = []
     sorted_list.slice(0, top).forEach((dict, index) => {
-        dict['rank'] = index
+        dict['rank'] = index + 1
         ranked_list.push()
     })
     return sorted_list.slice(0, top)

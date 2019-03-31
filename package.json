@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "d3": "5.9.2",
+    "lodash": "4.17.11",
     "numeral": "2.0.6",
     "papaparse": "4.6.3",
     "react": "^16.8.4",

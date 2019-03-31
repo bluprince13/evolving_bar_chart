@@ -1,11 +1,10 @@
 import React, { Component } from "react";
-import numeral from 'numeral';
+import numeral from "numeral";
+import _ from "lodash";
 import * as d3 from "d3";
 
 class BarChart extends Component {
-  drawChart() {
-    const data = this.props.data['2008'];
-
+  setUpSVG() {
     // set the dimensions and margins of the graph
     const margin = { top: 20, right: 20, bottom: 30, left: 40 },
       width = 960 - margin.left - margin.right,
@@ -30,6 +29,19 @@ class BarChart extends Component {
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+    // scale y axis
+    y.domain(_.range(1, 11));
+
+    return { width, height, x, y, svg };
+  }
+
+  scaleY(min, max) {}
+
+  drawChart() {
+    const data = this.props.data["2008"];
+
+    const { height, x, y, svg } = this.setUpSVG();
+
     // Scale the range of the data in the domains
     x.domain([
       0,
@@ -37,11 +49,6 @@ class BarChart extends Component {
         return d.value;
       })
     ]);
-    y.domain(
-      data.map(function(d) {
-        return d.category;
-      })
-    );
 
     // append the rectangles for the bar chart
     svg
@@ -55,41 +62,58 @@ class BarChart extends Component {
         return x(d.value);
       })
       .attr("y", function(d) {
-        return y(d.category);
+        return y(d.rank);
       })
       .attr("height", y.bandwidth());
 
-    svg.selectAll(".category-label")  		
-	  .data(data)
-	  .enter()
-	  .append("text")
-	  .attr("class","label")
-	  .attr("x", (function(d) { return x(d.value) } ))
-	  .attr("y", function(d) { return y(d.category) })
+    svg
+      .selectAll(".category-label")
+      .data(data)
+      .enter()
+      .append("text")
+      .attr("class", "label")
+      .attr("x", function(d) {
+        return x(d.value);
+      })
+      .attr("y", function(d) {
+        return y(d.rank);
+      })
       .attr("dy", ".75em")
       .attr("fill", "white")
       .attr("text-anchor", "end")
-	  .text(function(d) { return d.category; });   
+      .text(function(d) {
+        return d.category;
+      });
 
-    svg.selectAll(".value-label")  		
-	  .data(data)
-	  .enter()
-	  .append("text")
-	  .attr("class","label")
-	  .attr("x", (function(d) { return x(d.value) } ))
-	  .attr("y", function(d) { return y(d.category) })
+    svg
+      .selectAll(".value-label")
+      .data(data)
+      .enter()
+      .append("text")
+      .attr("class", "label")
+      .attr("x", function(d) {
+        return x(d.value);
+      })
+      .attr("y", function(d) {
+        return y(d.rank);
+      })
       .attr("dy", ".75em")
       .attr("fill", "black")
       .attr("text-anchor", "beginning")
-      .text(function(d) { return numeral(d.value).format('0.0a'); });   
-      
+      .text(function(d) {
+        return numeral(d.value).format("0.0a");
+      });
+
     // add the x Axis
     svg
       .append("g")
       .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x)
-        .ticks(10)
-        .tickFormat(d3.format('.1s')))
+      .call(
+        d3
+          .axisBottom(x)
+          .ticks(10)
+          .tickFormat(d3.format(".1s"))
+      );
   }
 
   componentDidMount() {
