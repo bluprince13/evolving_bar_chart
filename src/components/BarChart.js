@@ -35,7 +35,54 @@ class BarChart extends Component {
     return { width, height, x, y, svg };
   }
 
-  scaleY(min, max) {}
+  drawBar({ barData, svg, x, y }) {
+    const bar = svg.append("g");
+
+    bar
+      .attr("id", barData.category)
+
+    const input = { barData, bar, x, y };
+    this.drawRect(input);
+    this.addCategoryLabel(input);
+    this.addValueLabel(input);
+  }
+
+  drawRect({ barData, bar, x, y }) {
+    const { value, rank } = barData;
+    bar
+      .append("rect")
+      .attr("class", "bar")
+      .attr("fill", "blue")
+      .attr("width", x(value))
+      .attr("y", y(rank))
+      .attr("height", y.bandwidth());
+  }
+
+  addCategoryLabel({ barData, bar, x, y }) {
+    const { value, rank, category } = barData;
+    bar
+      .append("text")
+      .attr("class", "category-label")
+      .attr("x", x(value))
+      .attr("y", y(rank))
+      .attr("dy", ".75em")
+      .attr("fill", "white")
+      .attr("text-anchor", "end")
+      .text(category);
+  }
+
+  addValueLabel({ barData, bar, x, y }) {
+    const { value, rank } = barData;
+    bar
+      .append("text")
+      .attr("class", "value-label")
+      .attr("x", x(value))
+      .attr("y", y(rank))
+      .attr("dy", ".75em")
+      .attr("fill", "black")
+      .attr("text-anchor", "beginning")
+      .text(numeral(value).format("0.0a"));
+  }
 
   drawChart() {
     const data = this.props.data["2008"];
@@ -50,59 +97,9 @@ class BarChart extends Component {
       })
     ]);
 
-    // append the rectangles for the bar chart
-    svg
-      .selectAll(".bar")
-      .data(data)
-      .enter()
-      .append("rect")
-      .attr("class", "bar")
-      .attr("fill", "blue")
-      .attr("width", function(d) {
-        return x(d.value);
-      })
-      .attr("y", function(d) {
-        return y(d.rank);
-      })
-      .attr("height", y.bandwidth());
-
-    svg
-      .selectAll(".category-label")
-      .data(data)
-      .enter()
-      .append("text")
-      .attr("class", "label")
-      .attr("x", function(d) {
-        return x(d.value);
-      })
-      .attr("y", function(d) {
-        return y(d.rank);
-      })
-      .attr("dy", ".75em")
-      .attr("fill", "white")
-      .attr("text-anchor", "end")
-      .text(function(d) {
-        return d.category;
-      });
-
-    svg
-      .selectAll(".value-label")
-      .data(data)
-      .enter()
-      .append("text")
-      .attr("class", "label")
-      .attr("x", function(d) {
-        return x(d.value);
-      })
-      .attr("y", function(d) {
-        return y(d.rank);
-      })
-      .attr("dy", ".75em")
-      .attr("fill", "black")
-      .attr("text-anchor", "beginning")
-      .text(function(d) {
-        return numeral(d.value).format("0.0a");
-      });
+    data.forEach(barData => {
+      this.drawBar({ barData, svg, x, y });
+    });
 
     // add the x Axis
     svg
